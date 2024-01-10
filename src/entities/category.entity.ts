@@ -18,21 +18,23 @@ export class Category {
   @PrimaryGeneratedColumn({ type: "int", name: "category_id", unsigned: true })
   categoryId: number;
 
-  @Column("varchar", {
-    name: "name",
+  @Column({
+    type:"varchar",
     unique: true,
     length: 32,
   })
   name: string;
 
-  @Column("varchar", {
+  @Column({
+    type: "varchar", 
     name: "image_path",
     unique: true,
     length: 128,
   })
   imagePath: string;
 
-  @Column("int", {
+  @Column({
+    type: "int", 
     name: "parent__category_id",
     nullable: true,
     unsigned: true,

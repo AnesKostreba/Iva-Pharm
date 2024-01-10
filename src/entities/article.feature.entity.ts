@@ -22,13 +22,13 @@ export class ArticleFeature {
   })
   articleFeatureId: number;
 
-  @Column("int", { name: "article_id", unsigned: true})
+  @Column({type:"int", name: "article_id", unsigned: true})
   articleId: number;
 
-  @Column("int", { name: "feature_id", unsigned: true})
+  @Column({type:"int",  name: "feature_id", unsigned: true})
   featureId: number;
 
-  @Column("varchar", { name: "value", length: 255})
+  @Column({type:"varchar", length: 255})
   value: string;
 
   @ManyToOne(() => Article, (article) => article.articleFeatures, {
