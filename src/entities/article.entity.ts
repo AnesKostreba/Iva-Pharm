@@ -3,6 +3,8 @@ import {
   Entity,
   Index,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -12,6 +14,7 @@ import { ArticleFeature } from "./article.feature.entity";
 import { ArticlePrice } from "./article.price";
 import { CartArticle } from "./cart.article.entity";
 import { Photo } from "./photo.entity";
+import { Feature } from "./feature.entity";
 
 @Index("fk_article_category_id", ["categoryId"], {})
 @Entity("article")
@@ -19,32 +22,34 @@ export class Article {
   @PrimaryGeneratedColumn({ type: "int", name: "article_id", unsigned: true })
   articleId: number;
 
-  @Column("varchar", { name: "name", length: 128})
+  @Column({type: 'varchar', length: 128})
   name: string;
 
-  @Column("int", { name: "category_id", unsigned: true})
+  @Column({type:'int', name: "category_id", unsigned: true})
   categoryId: number;
 
-  @Column("varchar", { name: "excerpt", length: 255})
+  @Column({type: "varchar", length: 255})
   excerpt: string;
 
-  @Column("text", { name: "description" })
+  @Column({type:'text'})
   description: string;
 
-  @Column("enum", {
-    name: "status",
+  @Column({
+    type:'enum',
     enum: ["available", "visible", "hidden"],
     default: () => "'available'",
   })
   status: "available" | "visible" | "hidden";
 
-  @Column("tinyint", {
+  @Column({
+    type:'tinyint',
     name: "is_promoted",
     unsigned: true,
   })
   isPromoted: number;
 
-  @Column("timestamp", {
+  @Column({
+    type:'timestamp',
     name: "created_at",
     default: () => "CURRENT_TIMESTAMP",
   })
@@ -59,6 +64,14 @@ export class Article {
 
   @OneToMany(() => ArticleFeature, (articleFeature) => articleFeature.article)
   articleFeatures: ArticleFeature[];
+
+  @ManyToMany(type => Feature, feature => feature.articles)
+  @JoinTable({
+    name: "article_feature",
+    joinColumn:{ name: "article_id", referencedColumnName: "articleId" },
+    inverseJoinColumn: { name: "feature_id", referencedColumnName: "featureId"}
+  })
+  features: Feature[];
 
   @OneToMany(() => ArticlePrice, (articlePrice) => articlePrice.article)
   articlePrices: ArticlePrice[];

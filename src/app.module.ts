@@ -5,6 +5,20 @@ import { databaseConfiguration } from 'config/database.configuration';
 import { Administrator } from './entities/administrator.entity';
 import { AdministratorService } from './services/administrator/administrator.service';
 import { AdministratorController } from './controllers/api/administrator.controller';
+import { CategoryService } from './services/category/category.service';
+import { Category } from './entities/category.entity';
+import { CategoryController } from './controllers/api/category.controller';
+import { Article } from './entities/article.entity';
+import { ArticleFeature } from './entities/article.feature.entity';
+import { ArticlePrice } from './entities/article.price';
+import { CartArticle } from './entities/cart.article.entity';
+import { Cart } from './entities/cart.entity';
+import { Feature } from './entities/feature.entity';
+import { Order } from './entities/order.entity';
+import { Photo } from './entities/photo.entity';
+import { User } from './entities/user.entity';
+import { ArticleService } from './services/article/article.service';
+import { ArticleController } from './controllers/api/article.controller';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -14,14 +28,36 @@ import { AdministratorController } from './controllers/api/administrator.control
     database: databaseConfiguration.database,
     password: databaseConfiguration.password,
     username: databaseConfiguration.username,
-    entities: [Administrator]
+    entities: [
+      Administrator,
+      ArticleFeature,
+      Article,
+      ArticlePrice,
+      CartArticle,
+      Cart,
+      Category,
+      Feature,
+      Order,
+      Photo,
+      User
+    ]
   }),
-  TypeOrmModule.forFeature([Administrator])
+  TypeOrmModule.forFeature([
+    Administrator,
+    Category,
+    Article
+  ])
 ],
   controllers: [
     AppController,
-    AdministratorController
+    AdministratorController,
+    CategoryController,
+    ArticleController
   ],
-  providers: [AdministratorService],
+  providers: [
+    AdministratorService,
+    CategoryService,
+    ArticleService,
+  ],
 })
 export class AppModule {}
