@@ -27,7 +27,7 @@ export class ArticlePrice {
     precision: 10,
     scale: 2,
   })
-  price: string;
+  price: number;
 
   @Column("timestamp", {
     name: "created_at",
