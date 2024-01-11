@@ -13,18 +13,29 @@ export class AdministratorService {
     constructor(
         @InjectRepository(Administrator)
         private readonly administratorService: Repository<Administrator>
-    ){}
+    ) { }
 
-    getAll():Promise<Administrator[]>{
+    getAll(): Promise<Administrator[]> {
         return this.administratorService.find()
     }
 
-    getById(administratorId : number):Promise<Administrator>{
-        return this.administratorService.findOne({where:{administratorId}});
+    async getByUsername(usernameString: string): Promise<Administrator | null> {
+        const admin = await this.administratorService.findOne({
+            where: { username: usernameString }
+        });
+
+        if (admin) {
+            return admin
+        }
+        return null;
     }
 
-    add(data: AddAdministratorDto):Promise<Administrator | ApiResponse>{
-        
+    getById(administratorId: number): Promise<Administrator> {
+        return this.administratorService.findOne({ where: { administratorId } });
+    }
+
+    add(data: AddAdministratorDto): Promise<Administrator | ApiResponse> {
+
         const passwordHash = crypto.createHash('sha512')
         passwordHash.update(data.password)
         const passwordHashString = passwordHash.digest('hex').toUpperCase()
@@ -33,26 +44,26 @@ export class AdministratorService {
         newAdmin.username = data.username;
         newAdmin.passwordHash = passwordHashString;
 
-        return new Promise((resolve)=>{
+        return new Promise((resolve) => {
             this.administratorService.save(newAdmin)
-            .then(data => resolve(data))
-            .catch(error=>{
-                let response = new ApiResponse("error", -1001)
-                resolve(response)
-            })
+                .then(data => resolve(data))
+                .catch(error => {
+                    let response = new ApiResponse("error", -1001)
+                    resolve(response)
+                })
         })
     }
 
-    async edit(administratorId: number, data:EditAdministratorDto):Promise<Administrator | ApiResponse>{
-        const admin = await this.administratorService.findOne({where:{administratorId}});
+    async edit(administratorId: number, data: EditAdministratorDto): Promise<Administrator | ApiResponse> {
+        const admin = await this.administratorService.findOne({ where: { administratorId } });
 
-        if(admin === null){
-            return new Promise((resolve) =>{
+        if (admin === null) {
+            return new Promise((resolve) => {
                 resolve(new ApiResponse("error", -1002))
             })
         }
 
-        
+
         const passwordHash = crypto.createHash('sha512')
         passwordHash.update(data.password)
         const passwordHashString = passwordHash.digest('hex').toUpperCase()
