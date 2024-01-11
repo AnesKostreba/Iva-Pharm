@@ -21,6 +21,7 @@ import { ArticleService } from './services/article/article.service';
 import { ArticleController } from './controllers/api/article.controller';
 import { AuthController } from './controllers/api/auth.controller';
 import { AuthMiddleware } from './middlewares/auth.middleware';
+import { PhotoService } from './services/photo/photo.service';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
@@ -46,10 +47,16 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
   }),
   TypeOrmModule.forFeature([
     Administrator,
-    Category,
-    Article,
-    ArticlePrice,
-    ArticleFeature
+      ArticleFeature,
+      Article,
+      ArticlePrice,
+      CartArticle,
+      Cart,
+      Category,
+      Feature,
+      Order,
+      Photo,
+      User
   ])
 ],
   controllers: [
@@ -63,9 +70,11 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
     AdministratorService,
     CategoryService,
     ArticleService,
+    PhotoService
   ],
   exports:[
     AdministratorService,
+
   ]
 })
 export class AppModule implements NestModule{
