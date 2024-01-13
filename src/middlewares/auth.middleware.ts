@@ -5,7 +5,13 @@ import * as jwt from 'jsonwebtoken'
 import { JwtDataDto } from "src/dtos/auth/jwt.data.dto";
 import { jwtSecret } from "config/jwt.secret";
 import { UserService } from "src/services/user/user.service";
+import { User } from "src/entities/user.entity";
 
+declare module 'express' {
+    interface Request {
+      user?: User; // Prilagodite ovaj tip prema vašim potrebama
+    }
+  }
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
     constructor(
@@ -59,6 +65,7 @@ export class AuthMiddleware implements NestMiddleware {
             if (!user) {
                 throw new HttpException('Account not found!', HttpStatus.UNAUTHORIZED);
             }
+            req.user = user;
         }
 
         const trenutniTimeStamp = new Date().getTime() / 1000.0;
