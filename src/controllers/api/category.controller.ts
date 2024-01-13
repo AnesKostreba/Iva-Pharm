@@ -59,6 +59,7 @@ import { CategoryService } from "src/services/category/category.service";
                 AllowToRoles('administrator', "user")
             ]
         },
+        
         getOneBase:{
             decorators:[
                 UseGuards(RoleCheckerGuard),
