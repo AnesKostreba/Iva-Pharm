@@ -40,5 +40,4 @@ export class CategoryController {
     async getMany(@ParsedRequest() req: CrudRequest) {
         return this.service.getMany(req);
     }
-
 }
