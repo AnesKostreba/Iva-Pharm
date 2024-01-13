@@ -33,19 +33,44 @@ import { AllowToRoles } from "src/misc/allow.to.roles.descriptor";
             },
         }
     },
-    routes: {
-        createOneBase:{
-            returnShallow: true
-        },
-        
+    routes: {        
         only: [
             'createOneBase',
             'createManyBase',
             'updateOneBase',
-            'updateOneBase',
             'getManyBase',
             'getOneBase',
         ],
+        createOneBase:{
+            decorators:[
+                UseGuards(RoleCheckerGuard),
+                AllowToRoles('administrator')
+            ]
+        },
+        createManyBase:{
+            decorators:[
+                UseGuards(RoleCheckerGuard),
+                AllowToRoles('administrator')
+            ]
+        },
+        getManyBase:{
+            decorators:[
+                UseGuards(RoleCheckerGuard),
+                AllowToRoles('administrator', "user")
+            ]
+        },
+        getOneBase:{
+            decorators:[
+                UseGuards(RoleCheckerGuard),
+                AllowToRoles('administrator', "user")
+            ]
+        },
+        updateOneBase:{
+            decorators:[
+                UseGuards(RoleCheckerGuard),
+                AllowToRoles('administrator', "user")
+            ]
+        }
     },
 })
 @ApiTags('feature')

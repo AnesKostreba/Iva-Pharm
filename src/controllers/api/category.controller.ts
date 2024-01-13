@@ -32,7 +32,47 @@ import { CategoryService } from "src/services/category/category.service";
                 eager: false
             }
         }
+    },
+    routes:{
+        only:[
+            "createOneBase",
+            "createManyBase",
+            "getManyBase",
+            "getOneBase",
+            "updateOneBase"
+        ],
+        createOneBase:{
+            decorators:[
+                UseGuards(RoleCheckerGuard),
+                AllowToRoles('administrator')
+            ]
+        },
+        createManyBase:{
+            decorators:[
+                UseGuards(RoleCheckerGuard),
+                AllowToRoles('administrator')
+            ]
+        },
+        getManyBase:{
+            decorators:[
+                UseGuards(RoleCheckerGuard),
+                AllowToRoles('administrator', "user")
+            ]
+        },
+        getOneBase:{
+            decorators:[
+                UseGuards(RoleCheckerGuard),
+                AllowToRoles('administrator', "user")
+            ]
+        },
+        updateOneBase:{
+            decorators:[
+                UseGuards(RoleCheckerGuard),
+                AllowToRoles('administrator', "user")
+            ]
+        }
     }
+
 })
 export class CategoryController {
     constructor(public service: CategoryService) { }
