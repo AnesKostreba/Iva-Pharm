@@ -1,9 +1,11 @@
 import { Crud, CrudController, CrudRequest, Override, ParsedRequest } from "@nestjsx/crud";
 import { Feature } from "src/entities/feature.entity";
 import { FeatureService } from "src/services/feature/feature.service";
-import { Body, Controller, Get, HttpCode, Param, Post} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, UseGuards} from '@nestjs/common';
 import { FeatureDto } from "src/dtos/feature/feature.dto";
 import { ApiTags } from '@nestjs/swagger';
+import { RoleCheckerGuard } from "src/misc/role.checker.guard";
+import { AllowToRoles } from "src/misc/allow.to.roles.descriptor";
 
 
 @Crud({
@@ -51,12 +53,16 @@ import { ApiTags } from '@nestjs/swagger';
 export class FeatureController implements CrudController<Feature> {
     constructor(public service: FeatureService) { }
     @Get()
+    @UseGuards(RoleCheckerGuard)
+    @AllowToRoles('administrator')
     @Override()
     async getMany(@ParsedRequest() req: CrudRequest) {
         return this.service.getMany(req);
     }
 
     @Get(':id')
+    @UseGuards(RoleCheckerGuard)
+    @AllowToRoles('administrator')
     async getOne(@Param('id') id: number): Promise<Feature> {
         const article = await this.service.findOne({
             where: { featureId: id, },
