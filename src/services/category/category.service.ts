@@ -12,6 +12,4 @@ export class CategoryService extends TypeOrmCrudService<Category>{
     ){
         super(category)
     }
-
-    
 }

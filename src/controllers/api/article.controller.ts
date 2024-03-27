@@ -77,7 +77,7 @@ export class ArticleController {
 
     @Get()
     @UseGuards(RoleCheckerGuard)
-    @AllowToRoles('administrator')
+    @AllowToRoles('administrator', 'user')
     @Override()
     async getMany(@ParsedRequest() req: CrudRequest) {
         return this.service.getMany(req);
@@ -85,7 +85,7 @@ export class ArticleController {
 
     @Get(':id')
     @UseGuards(RoleCheckerGuard)
-    @AllowToRoles('administrator')
+    @AllowToRoles('administrator', 'user')
     async getOne(@Param('id') id: number): Promise<Article> {
         const article = await this.service.findOne({
             where: { articleId: id, },
@@ -276,7 +276,7 @@ export class ArticleController {
     @Post('search')
     @UseGuards(RoleCheckerGuard)
     @AllowToRoles('administrator', 'user')
-    async search(@Body() data: ArticleSearchDto):Promise<Article[]>{
+    async search(@Body() data: ArticleSearchDto):Promise<Article[] | ApiResponse>{
         return await this.service.search(data);
     }
 }

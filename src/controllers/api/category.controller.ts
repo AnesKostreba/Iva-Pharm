@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, UseGuards } from "@nestjs/common";
 import { Crud, CrudRequest, Override, ParsedRequest } from "@nestjsx/crud";
 import { Category } from "src/entities/category.entity";
 import { AllowToRoles } from "src/misc/allow.to.roles.descriptor";
@@ -78,9 +78,20 @@ import { CategoryService } from "src/services/category/category.service";
 export class CategoryController {
     constructor(public service: CategoryService) { }
 
+    @Get(':id')
+    @UseGuards(RoleCheckerGuard)
+    @AllowToRoles('administrator', 'user')
+    async getOne(@Param('id') id: number): Promise<Category>{
+        const category = await this.service.findOne({
+            where: { categoryId: id}
+        })
+        return category;
+    }
+
+
     @Get()
     @UseGuards(RoleCheckerGuard)
-    @AllowToRoles('administrator')
+    @AllowToRoles('administrator', "user")
     @Override()
     async getMany(@ParsedRequest() req: CrudRequest) {
         return this.service.getMany(req);
