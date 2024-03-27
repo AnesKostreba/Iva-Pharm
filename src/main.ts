@@ -14,6 +14,9 @@ async function bootstrap() {
   })
 
   app.useGlobalPipes(new ValidationPipe())
+
+  app.enableCors() // unutra mozemo navoditi kao objekat, npr koji hederi su dozvoljeni, koji domeni i sl
+
   await app.listen(3000);
 }
 bootstrap();
