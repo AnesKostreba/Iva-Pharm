@@ -141,7 +141,8 @@ export class ArticleService extends TypeOrmCrudService<Article>{
             // pametnije resenje (zahteva trigger_article_price_ai)
             // ap.current = 1
         builder.leftJoinAndSelect("article.articleFeatures", "af")
-
+        builder.leftJoinAndSelect("article.features", "features")
+        builder.leftJoinAndSelect("article.photos", "photos")
 
         builder.where('article.categoryId = :categoryId', { categoryId: data.categoryId });
 
@@ -207,21 +208,23 @@ export class ArticleService extends TypeOrmCrudService<Article>{
         builder.skip(page * perPage)
         builder.take(perPage);
 
-        let articleIds = await (await builder.getMany()).map(article => article.articleId);
+        let articles = await builder.getMany();
 
-        if(articleIds.length === 0){
+        if(articles.length === 0){
             return new ApiResponse("ok", 0 , "No articles found for these search parameters!");
         }
 
-        return await this.article.find({
-            where: {articleId: In(articleIds)},
-            relations:[
-                "category",
-                "articleFeatures",
-                "features",
-                "articlePrices",
-                "photos"
-            ]
-        });
+        return articles;
+
+        // return await this.article.find({
+        //     where: {articleId: In(articleIds)},
+        //     relations:[
+        //         "category",
+        //         "articleFeatures",
+        //         "features",
+        //         "articlePrices",
+        //         "photos"
+        //     ]
+        // });
     }
 }
