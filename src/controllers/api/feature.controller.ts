@@ -6,6 +6,7 @@ import { FeatureDto } from "src/dtos/feature/feature.dto";
 import { ApiTags } from '@nestjs/swagger';
 import { RoleCheckerGuard } from "src/misc/role.checker.guard";
 import { AllowToRoles } from "src/misc/allow.to.roles.descriptor";
+import DistinctFeatureValuesDto from "src/dtos/feature/distinct.feature.values.dto";
 
 
 @Crud({
@@ -94,6 +95,13 @@ export class FeatureController implements CrudController<Feature> {
             relations: ['category']
         });
         return article;
+    }
+
+    @Get('values/:categoryId')
+    @UseGuards(RoleCheckerGuard)
+    @AllowToRoles('administrator', 'user')
+    async getDistinctValuesByCategoryId(@Param('categoryId') categoryId: number): Promise<DistinctFeatureValuesDto>{
+        return await this.service.getDistinctValuesByCategoryId(categoryId);
     }
 
     // @Post()
