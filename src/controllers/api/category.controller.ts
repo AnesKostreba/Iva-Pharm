@@ -20,10 +20,10 @@ import { CategoryService } from "src/services/category/category.service";
     query:{
         join:{
             categories:{
-                eager: true
+                eager: false
             },
             features: {
-                eager: true
+                eager: false
             },
             parentCategory:{
                 eager: false
@@ -83,7 +83,8 @@ export class CategoryController {
     @AllowToRoles('administrator', 'user')
     async getOne(@Param('id') id: number): Promise<Category>{
         const category = await this.service.findOne({
-            where: { categoryId: id}
+            where: { categoryId: id},
+            relations: ['categories','parentCategory']
         })
         return category;
     }
