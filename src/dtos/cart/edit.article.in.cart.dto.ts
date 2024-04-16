@@ -3,7 +3,6 @@ export class EditArticleInCartDto{
     articleId: number;
 
     @Validator.IsNotEmpty()
-    @Validator.IsPositive()
     @Validator.IsNumber({
         allowInfinity: false,
         allowNaN: false,

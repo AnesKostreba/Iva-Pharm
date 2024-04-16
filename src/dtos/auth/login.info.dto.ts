@@ -10,5 +10,6 @@ export class LoginInfoDto{
         this.identity = identity;
         this.token = jwt;
         this.refreshToken = refreshToken;
+        this.refreshTokenExpiresAt = refreshTokenExpiresAt;
     }
 }
