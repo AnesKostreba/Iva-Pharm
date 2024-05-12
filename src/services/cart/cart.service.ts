@@ -80,6 +80,7 @@ export class CartService {
                 "cartArticles",
                 "cartArticles.article",
                 "cartArticles.article.category",
+                "cartArticles.article.photos",
                 "cartArticles.article.articlePrices",
             ],
         });
