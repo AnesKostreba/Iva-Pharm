@@ -33,6 +33,7 @@ import { MailConfig } from 'config/mail.config';
 import { OrderMailer } from './services/order/order.mailer.service';
 import { AdministratorOrderController } from './controllers/api/administrator.order.controller';
 import { UserToken } from './entities/user-token.entity';
+import { UserController } from './controllers/api/user.controller';
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { UserToken } from './entities/user-token.entity';
 ],
   controllers: [
     AppController,
+    UserController,
     AdministratorController,
     CategoryController,
     ArticleController,
