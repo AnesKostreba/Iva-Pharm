@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Cart } from "src/entities/cart.entity";
 import { Order } from "src/entities/order.entity";
+import { User } from "src/entities/user.entity";
 import { ApiResponse } from "src/misc/api.response.class";
 import { Repository } from "typeorm";
 
@@ -27,7 +28,7 @@ export class OrderService {
         // da li cart postoji
         const cart = await this.cart.findOne({
             where:{cartId: cartId},
-            // da li korpa ima bar jedan article u sebi, moramo dodati relaciju da bismo je dalje koristili
+            // da li korpa ima bar jedan article u sebi, moram dodati relaciju da bi je dalje koristio
             relations: [
                 "cartArticles"
             ]
@@ -48,6 +49,9 @@ export class OrderService {
 
         const savedOrder = await this.order.save(newOrder);
 
+        cart.createdAt = new Date();
+        await this.cart.save(cart)
+
         return await this.getById(savedOrder.orderId);
     }
 
@@ -63,6 +67,25 @@ export class OrderService {
             ]
         })
     }
+
+    async getAllByUserId(userId: number){
+        return await this.order.find({
+            where: {
+                cart: {
+                    userId: userId
+                }
+            },
+            relations:[
+                "cart",
+                "cart.user",
+                "cart.cartArticles",
+                "cart.cartArticles.article",
+                "cart.cartArticles.article.category",
+                "cart.cartArticles.article.articlePrices",
+            ]
+        })
+    }
+
 
     async changeStatus(orderId: number, newStatus: "rejected" | "accepted" | "shipped" | "pending"){
         const order = await this.getById(orderId);
