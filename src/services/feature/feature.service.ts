@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TypeOrmCrudService } from "@nestjsx/crud-typeorm";
+import { EditCategoryDto } from "src/dtos/category/edit.category.dto";
 import DistinctFeatureValuesDto from "src/dtos/feature/distinct.feature.values.dto";
+import { EditFeatureDto } from "src/dtos/feature/edit.feature.dto";
 import { FeatureDto } from "src/dtos/feature/feature.dto";
 import { ArticleFeature } from "src/entities/article.feature.entity";
 import { Feature } from "src/entities/feature.entity";
@@ -51,6 +53,30 @@ export class FeatureService extends TypeOrmCrudService<Feature>{
         return result;
     }
 
+
+    async create(feature: Feature):Promise<Feature>{
+        return this.feature.save(feature)
+    }
+
+
+    // async updateFeature(id: number, editFeatureDto: EditFeatureDto):Promise<Feature>{
+    //     const feature = await this.feature.findOne({where: {featureId: id}})
+
+    //     feature.name = editFeatureDto.name;
+
+    //     return this.feature.save(feature);
+    // }
+
+
+
+
+    async updateFeature(id: number, editFeatureDto: EditFeatureDto ):Promise<Feature>{
+        const feature = await this.feature.findOne({where: { featureId: id }})
+
+        feature.name = editFeatureDto.name;
+
+        return this.feature.save(feature)
+    }
     
 
 

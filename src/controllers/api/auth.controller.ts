@@ -13,6 +13,7 @@ import { UserService } from "src/services/user/user.service";
 import { LoginUserDto } from "src/dtos/user/login.user.dto";
 import { JwtRefreshDataDto } from "src/dtos/auth/jwt.refresh.dto";
 import { UserRefreshTokenDto } from "src/dtos/auth/user.refresh.token.dto";
+import { AdministratorRefreshTokenDto } from "src/dtos/auth/administrator.refresh.token.dto";
 
 @Controller('auth/')
 export class AuthController {
@@ -50,24 +51,100 @@ export class AuthController {
         jwtData.role = "administrator";
         jwtData.id = administrator.administratorId;
         jwtData.identity = administrator.username;
-
-        jwtData.exp = this.getDatePlus(60 * 60 * 24 * 14); // 14 dana;
-
+        jwtData.exp = this.getDatePlus(60 * 20); // 20 min traje token;
         jwtData.ip = req.ip.toString();
         jwtData.ua = req.headers["user-agent"];
 
         let token: string =  jwt.sign(jwtData.toPlainObject(), jwtSecret); //GEN !!
 
+        const jwtRefresData = new JwtRefreshDataDto();
+        jwtRefresData.role = jwtData.role;
+        jwtRefresData.id = jwtData.id;
+        jwtRefresData.identity = jwtData.identity;
+        jwtRefresData.exp = this.getDatePlus(60 * 60 * 24 * 31);// koliko sekundi od sada...31 dan
+        jwtRefresData.ip = jwtData.ip;
+        jwtRefresData.ua = jwtData.ua;
+
+        let refreshToken: string =  jwt.sign(jwtRefresData.toPlainObject(), jwtSecret); //GEN !!
+
         const responseObject = new LoginInfoDto(
             administrator.administratorId,
             administrator.username,
             token,
-            "",
-            ""
+            refreshToken,
+            this.getIsoDate(jwtRefresData.exp)
         ) ;
+
+        await this.administratorService.addToken(
+            administrator.administratorId, 
+            refreshToken, 
+            this.getDatabaseDateFormat(this.getIsoDate(jwtRefresData.exp))
+        );
 
         return new Promise(resolve => resolve(responseObject))
 
+    }
+
+    @Post('administrator/refresh') //http://localhost:3000/auth/administrator/refresh
+    async administratorTokenRefresh(@Req() req: Request, @Body() data: AdministratorRefreshTokenDto):Promise<LoginInfoDto | ApiResponse> {
+        const administratorToken = await this.administratorService.getAdministratorToken(data.token)
+
+        if(!administratorToken){
+            return new ApiResponse('error', -10002, 'No such refresh token!')
+        }
+
+        if(administratorToken.isValid === 0){
+            return new ApiResponse('error', -10003, 'The token is no longer valid!')
+        }
+
+        const sada = new Date();
+        const datumIsteka = new Date(administratorToken.expiresAt);
+
+        if(datumIsteka.getTime() < sada.getTime()){
+            return new ApiResponse('error', -10004, 'The token has expired!!')
+        }
+
+        let jwtRefreshData: JwtRefreshDataDto;
+
+        try {
+            jwtRefreshData = jwt.verify(data.token, jwtSecret);
+        } catch (e) {
+            throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
+        }
+
+        if (!jwtRefreshData) {
+            throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
+        }
+
+        if (jwtRefreshData.ip !== req.ip.toString()) {
+            throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
+        }
+
+        if (jwtRefreshData.ua !== req.headers["user-agent"]) {
+            throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
+        }
+
+        const jwtData = new JwtDataDto();
+        jwtData.role = jwtRefreshData.role;
+        jwtData.id = jwtRefreshData.id;
+        jwtData.identity = jwtRefreshData.identity;
+
+        jwtData.exp = this.getDatePlus(60 * 10); // 10 min token traje
+
+        jwtData.ip = jwtRefreshData.ip;
+        jwtData.ua = jwtRefreshData.ua;
+
+        let token: string =  jwt.sign(jwtData.toPlainObject(), jwtSecret); //GEN !!
+
+        const responseObject = new LoginInfoDto(
+            jwtData.id,
+            jwtData.identity,
+            token,
+            data.token,
+            this.getIsoDate(jwtRefreshData.exp)
+        ) ;
+
+        return responseObject;
     }
 
     @Post('user/register') // POST http://localhost:3000/auth/user/register/

@@ -1,7 +1,10 @@
-import { Controller, Get, Param, UseGuards } from "@nestjs/common";
+import { Body, ConflictException, Controller, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { Crud, CrudRequest, Override, ParsedRequest } from "@nestjsx/crud";
+import { CreateCategoryDto } from "src/dtos/category/add.category.dto";
+import { EditCategoryDto } from "src/dtos/category/edit.category.dto";
 import { Category } from "src/entities/category.entity";
 import { AllowToRoles } from "src/misc/allow.to.roles.descriptor";
+import { ApiResponse } from "src/misc/api.response.class";
 import { RoleCheckerGuard } from "src/misc/role.checker.guard";
 import { CategoryService } from "src/services/category/category.service";
 
@@ -96,5 +99,29 @@ export class CategoryController {
     @Override()
     async getMany(@ParsedRequest() req: CrudRequest) {
         return this.service.getMany(req);
+    }
+
+    @Post('create')
+    @UseGuards(RoleCheckerGuard)
+    @AllowToRoles('administrator')
+    async createOne(@Body() createCategoryDto: CreateCategoryDto): Promise<Category> {
+        const { name } = createCategoryDto;
+        const existingCategory = await this.service.findOne({where: { name }});
+        if(existingCategory){
+            throw new ConflictException('Category already exists!');
+        }
+
+        const category = new Category();
+        category.name = createCategoryDto.name;
+        category.imagePath = createCategoryDto.imagePath;
+        category.parentCategoryId = createCategoryDto.parentCategoryId;
+        return this.service.create(category);
+    }
+
+    @Patch(':id')
+    @UseGuards(RoleCheckerGuard)
+    @AllowToRoles('administrator')
+    async updateCategory(@Param('id') id: number, @Body() editCategoryDto: EditCategoryDto): Promise<Category> {
+        return this.service.updateCategory(id, editCategoryDto);
     }
 }

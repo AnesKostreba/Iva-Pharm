@@ -6,6 +6,7 @@ export class AddArticleDto {
     @Validator.Length(5, 128)
     name: string;
 
+    // dodati status i isPromoted
     categoryId: number;
 
     @Validator.IsNotEmpty()

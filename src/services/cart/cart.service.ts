@@ -105,8 +105,5 @@ export class CartService {
         }
         // ako se sve zavrsi vrati getById, i ako se nije nista od gore navedenog zavrsilo isto svakako vracamo nepromenjen getById cat
         return await this.getById(cartId);
-
-
-
     }
 }
