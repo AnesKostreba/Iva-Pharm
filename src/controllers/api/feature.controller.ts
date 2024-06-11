@@ -1,12 +1,13 @@
 import { Crud, CrudController, CrudRequest, Override, ParsedRequest } from "@nestjsx/crud";
 import { Feature } from "src/entities/feature.entity";
 import { FeatureService } from "src/services/feature/feature.service";
-import { Body, Controller, Get, HttpCode, Param, Post, UseGuards} from '@nestjs/common';
-import { FeatureDto } from "src/dtos/feature/feature.dto";
+import { Body, Controller, Get, HttpCode, Param, Patch, Post, UseGuards} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { RoleCheckerGuard } from "src/misc/role.checker.guard";
 import { AllowToRoles } from "src/misc/allow.to.roles.descriptor";
 import DistinctFeatureValuesDto from "src/dtos/feature/distinct.feature.values.dto";
+import { FeatureDto } from "src/dtos/feature/feature.dto";
+import { EditFeatureDto } from "src/dtos/feature/edit.feature.dto";
 
 
 @Crud({
@@ -103,6 +104,32 @@ export class FeatureController implements CrudController<Feature> {
     async getDistinctValuesByCategoryId(@Param('categoryId') categoryId: number): Promise<DistinctFeatureValuesDto>{
         return await this.service.getDistinctValuesByCategoryId(categoryId);
     }
+
+    @Post()
+    @UseGuards(RoleCheckerGuard)
+    @AllowToRoles('administrator')
+    async createFeature(@Body() featureDto: FeatureDto): Promise<Feature> {
+        const feature = new Feature();
+        feature.name = featureDto.name;
+        feature.categoryId = featureDto.categoryId;
+
+        return this.service.create(feature);
+    }
+
+
+    @Patch(':id')
+    @UseGuards(RoleCheckerGuard)
+    @AllowToRoles('administrator') 
+    async updateFeature(@Param('id') id: number, @Body() editFeatureDto: EditFeatureDto):Promise<Feature>{
+        return this.service.updateFeature(id, editFeatureDto);
+    }
+
+    // @Patch(':id')
+    // @UseGuards(RoleCheckerGuard)
+    // @AllowToRoles('administrator')
+    // async updateFeature(@Param('id') id: number, @Body() editFeature: EditFeatureDto):Promise<Feature>{
+    //     return this.service.updateFeature(id, editFeature)
+    // }
 
     // @Post()
     // async createFeature(

@@ -80,7 +80,7 @@ export class ArticleService extends TypeOrmCrudService<Article>{
         existingArticle.description = data.description;
         existingArticle.excerpt = data.excerpt;
         existingArticle.status = data.status;
-        existingArticle.isPromoted = data.is_promoted;
+        existingArticle.isPromoted = data.isPromoted;
 
         const savedArticle = await this.article.save(existingArticle)
 

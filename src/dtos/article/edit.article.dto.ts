@@ -25,7 +25,8 @@ export class EditArticleDto {
 
     @Validator.IsNotEmpty()
     @Validator.IsIn([0, 1])
-    is_promoted: 0 | 1;
+    isPromoted: 0 | 1;
+    
     price: number;
 
     @Validator.IsOptional()
