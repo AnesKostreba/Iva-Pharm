@@ -86,6 +86,19 @@ export class OrderService {
         })
     }
 
+    async getAll(){
+        return await this.order.find({
+            relations:[
+                "cart",
+                "cart.user",
+                "cart.cartArticles",
+                "cart.cartArticles.article",
+                "cart.cartArticles.article.category",
+                "cart.cartArticles.article.articlePrices",
+            ]
+        })
+    }
+
 
     async changeStatus(orderId: number, newStatus: "rejected" | "accepted" | "shipped" | "pending"){
         const order = await this.getById(orderId);
