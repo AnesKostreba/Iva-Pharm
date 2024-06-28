@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { TypeOrmCrudService } from "@nestjsx/crud-typeorm";
 import { AddArticleDto } from "src/dtos/article/add.article.dto";
+import { ArticleSearchByName } from "src/dtos/article/article.search.by.name";
 import { ArticleSearchDto } from "src/dtos/article/article.search.dto";
 import { EditArticleDto } from "src/dtos/article/edit.article.dto";
 import { Article } from "src/entities/article.entity";
@@ -227,4 +228,31 @@ export class ArticleService extends TypeOrmCrudService<Article>{
         //     ]
         // });
     }
+
+
+    async searchArticlesByName(data: ArticleSearchByName):Promise<Article[] | ApiResponse>{
+        const builder = this.article.createQueryBuilder('article');
+
+        builder.leftJoinAndSelect('article.articlePrices', 'ap', 'ap.createdAt = (SELECT MAX(ap.createdAt) FROM article_price AS ap WHERE ap.article_id = article.articleId)');
+        builder.leftJoinAndSelect('article.articleFeatures', 'af');
+        builder.leftJoinAndSelect('article.features', 'features');
+        builder.leftJoinAndSelect('article.photos', 'photos');
+
+        builder.where(`(
+            article.name LIKE :kw OR
+            article.excerpt LIKE :kw OR
+            article.description LIKE :kw
+        )`, { kw: '%' + data.keywords.trim() + '%' });
+
+        builder.orderBy('article.name', 'ASC');
+
+        const articles = await builder.getMany();
+
+        if (articles.length === 0) {
+            return new ApiResponse('ok', 0, 'No articles found for these search parameters!');
+        }
+
+        return articles;
+    }
+
 }

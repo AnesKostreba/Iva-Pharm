@@ -11,7 +11,7 @@ export class OrderMailer{
         await this.mailerService.sendMail({
             to: order.cart.user.email, // osoba kome se salje mejl
             bcc: MailConfig.orderNotificationMail, //na koju adresu stize notifikacija da je neko napravio porudzbinu
-            subject: 'Order details',
+            subject: 'Detalji o porudžbini',
             encoding: 'UTF-8',
             html: this.makeOrderHtml(order),
         })
@@ -33,8 +33,8 @@ export class OrderMailer{
                         </li>`;
                     }).join("") }
                 </ul>
-                <p>Ukupan iznos je: ${ suma.toFixed(2) } EUR.</p>
-                <p>Potpis....</p>
+                <p>Ukupan iznos poručene robe: ${ suma.toFixed(2) } EUR.</p>
+                <p></p>
                 `;
     }
 }
