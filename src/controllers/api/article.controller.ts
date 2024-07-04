@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Crud, CrudRequest, Override, ParsedRequest } from "@nestjsx/crud";
 import { AddArticleDto } from "src/dtos/article/add.article.dto";
 import { Article } from "src/entities/article.entity";
-import { ArticleService } from "src/services/article/article.service";
+import { ArticleSearchResponse, ArticleService } from "src/services/article/article.service";
 import { diskStorage } from 'multer'
 import { StorageConfig } from "config/storage.config";
 import { fileName } from "typeorm-model-generator/dist/src/NamingStrategy";
@@ -18,6 +18,7 @@ import { RoleCheckerGuard } from "src/misc/role.checker.guard";
 import { AllowToRoles } from "src/misc/allow.to.roles.descriptor";
 import { ArticleSearchDto } from "src/dtos/article/article.search.dto";
 import { ArticleSearchByName } from "src/dtos/article/article.search.by.name";
+import { query } from "express";
 
 @Controller('api/article')
 @Crud({
@@ -277,8 +278,8 @@ export class ArticleController {
     @Post('search')
     @UseGuards(RoleCheckerGuard)
     @AllowToRoles('administrator', 'user')
-    async search(@Body() data: ArticleSearchDto):Promise<Article[] | ApiResponse>{
-        return await this.service.search(data);
+    async search(@Body() data: ArticleSearchDto, @Query('page')page:number, @Query('limit') limit:number):Promise<{articles: Article[], totalCount: number} | ApiResponse>{
+        return await this.service.search(data, page, limit);
     }
 
     @Post('search-by-name')

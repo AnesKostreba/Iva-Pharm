@@ -68,35 +68,61 @@ export class OrderService {
         })
     }
 
-    async getAllByUserId(userId: number){
-        return await this.order.find({
-            where: {
-                cart: {
-                    userId: userId
-                }
-            },
-            relations:[
-                "cart",
-                "cart.user",
-                "cart.cartArticles",
-                "cart.cartArticles.article",
-                "cart.cartArticles.article.category",
-                "cart.cartArticles.article.articlePrices",
-            ]
-        })
+    async getAllByUserId(userId: number): Promise<Order[]> {
+        const orders = await this.order
+            .createQueryBuilder('order')
+            .leftJoinAndSelect('order.cart', 'cart')
+            .leftJoinAndSelect('cart.user', 'user')
+            .leftJoinAndSelect('cart.cartArticles', 'cartArticles')
+            .leftJoinAndSelect('cartArticles.article', 'article')
+            .leftJoinAndSelect('article.category', 'category')
+            .leftJoinAndSelect('article.articlePrices', 'articlePrices')
+            .where('cart.userId = :userId', { userId })
+            .orderBy('order.createdAt', 'DESC')
+            .getMany();
+
+        return orders;
     }
 
-    async getAll(){
-        return await this.order.find({
-            relations:[
-                "cart",
-                "cart.user",
-                "cart.cartArticles",
-                "cart.cartArticles.article",
-                "cart.cartArticles.article.category",
-                "cart.cartArticles.article.articlePrices",
-            ]
-        })
+        // return await this.order.find({
+        //     where: {
+        //         cart: {
+        //             userId: userId
+        //         }
+        //     },
+        //     relations:[
+        //         "cart",
+        //         "cart.user",
+        //         "cart.cartArticles",
+        //         "cart.cartArticles.article",
+        //         "cart.cartArticles.article.category",
+        //         "cart.cartArticles.article.articlePrices",
+        //     ]
+        // })
+    // }
+
+    async getAll():Promise<Order[]>{
+        const orders = await this.order.createQueryBuilder('order')
+        .leftJoinAndSelect('order.cart','cart')
+        .leftJoinAndSelect('cart.user','user')
+        .leftJoinAndSelect('cart.cartArticles','cartArticles')
+        .leftJoinAndSelect('cartArticles.article','article')
+        .leftJoinAndSelect('article.category','category')
+        .leftJoinAndSelect('article.articlePrices','articlePrices')
+        .orderBy('order.createdAt', 'DESC')
+        .getMany()
+
+        return orders;
+        // return await this.order.find({
+        //     relations:[
+        //         "cart",
+        //         "cart.user",
+        //         "cart.cartArticles",
+        //         "cart.cartArticles.article",
+        //         "cart.cartArticles.article.category",
+        //         "cart.cartArticles.article.articlePrices",
+        //     ]
+        // })
     }
 
 

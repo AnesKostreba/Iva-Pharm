@@ -48,7 +48,6 @@ export class ArticleSearchDto {
     orderDirection: 'ASC' | 'DESC';
 
     @Validator.IsOptional()
-    @Validator.IsPositive()
     @Validator.IsNumber({
         allowInfinity: false,
         allowNaN: false,
