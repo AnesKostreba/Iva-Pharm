@@ -71,9 +71,12 @@ export class UserService extends TypeOrmCrudService<User>{
     }
 
     async getUserToken(token: string):Promise<UserToken>{ // po njegovom stringu ga mozemo jedino preoznati da bismo ga izvukli
-        return await this.userToken.findOne({
+        // console.log(`Trazim token: ${token}`)
+        const userToken = await this.userToken.findOne({
             where:{token: token}
         })
+        // console.log(`Token pronadjen: ${JSON.stringify(userToken)}`)
+        return userToken;
     }
 
     async invalidateToken(token: string):Promise<UserToken | ApiResponse>{ // invalidacija tokena
@@ -104,5 +107,12 @@ export class UserService extends TypeOrmCrudService<User>{
         }
 
         return results;
+    }
+
+    async updateToken(oldToken: string, newToken: string, expiresAt: string): Promise<any> {
+        return await this.userToken.update(
+            { token: oldToken },
+            { token: newToken, expiresAt: expiresAt, isValid: 1 }
+        );
     }
 }

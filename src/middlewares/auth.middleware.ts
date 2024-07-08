@@ -65,7 +65,7 @@ export class AuthMiddleware implements NestMiddleware {
             if (!user) {
                 throw new HttpException('Account not found!', HttpStatus.UNAUTHORIZED);
             }
-            req.user = user;
+            // req.user = user; 
         }
 
         const trenutniTimeStamp = new Date().getTime() / 1000.0;
