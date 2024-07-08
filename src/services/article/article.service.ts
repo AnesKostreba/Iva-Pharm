@@ -11,6 +11,11 @@ import { ArticlePrice } from "src/entities/article.price";
 import { ApiResponse } from "src/misc/api.response.class";
 import { Any, In, Repository } from "typeorm";
 
+export interface ArticleSearchResponse{
+    articles: Article[];
+    total: number;
+}
+
 @Injectable()
 export class ArticleService extends TypeOrmCrudService<Article>{
     constructor(
@@ -132,7 +137,7 @@ export class ArticleService extends TypeOrmCrudService<Article>{
 
     }
 
-    async search(data: ArticleSearchDto): Promise<Article[] | ApiResponse> {
+    async search(data: ArticleSearchDto, page: number = 0, limit: number = 25): Promise<{ articles: Article[], totalCount: number } | ApiResponse>  {
         const builder = await this.article.createQueryBuilder("article");
 
         builder.innerJoinAndSelect(
@@ -195,27 +200,31 @@ export class ArticleService extends TypeOrmCrudService<Article>{
 
         builder.orderBy(orderBy, orderDirection);
 
-        let page = 0;
-        let perPage: 5 | 10 | 25 | 50 | 75 = 25;
+        // let page = 0;
+        // let perPage: 5 | 10 | 25 | 50 | 75 = 25;
 
         if (data.page && typeof data.page === 'number') {
-            page = data.page;
+            page = page;
         }
 
-        if (data.itemsPerPage && typeof data.itemsPerPage === 'number') {
-            perPage = data.itemsPerPage;
+        if (limit && typeof limit === 'number') {
+            limit = limit;
         }
 
-        builder.skip(page * perPage)
-        builder.take(perPage);
+        builder.skip(page * limit)
+        builder.take(limit);
 
-        let articles = await builder.getMany();
+        const [articles, totalCount] = await builder.getManyAndCount()
+
+        // let articles = await builder.getMany();
+
+        
 
         if(articles.length === 0){
             return new ApiResponse("ok", 0 , "No articles found for these search parameters!");
         }
 
-        return articles;
+        return {articles, totalCount};
 
         // return await this.article.find({
         //     where: {articleId: In(articleIds)},
