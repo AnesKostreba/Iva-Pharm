@@ -14,6 +14,7 @@ import { LoginUserDto } from "src/dtos/user/login.user.dto";
 import { JwtRefreshDataDto } from "src/dtos/auth/jwt.refresh.dto";
 import { UserRefreshTokenDto } from "src/dtos/auth/user.refresh.token.dto";
 import { AdministratorRefreshTokenDto } from "src/dtos/auth/administrator.refresh.token.dto";
+import { resolve } from "path";
 
 @Controller('auth/')
 export class AuthController {
@@ -61,7 +62,7 @@ export class AuthController {
         jwtRefresData.role = jwtData.role;
         jwtRefresData.id = jwtData.id;
         jwtRefresData.identity = jwtData.identity;
-        jwtRefresData.exp = this.getDatePlus(60 * 60 * 24 * 31);// koliko sekundi od sada...31 dan
+        jwtRefresData.exp = this.getDatePlus(60 * 60 * 24 * 14);// koliko sekundi od sada...31 dan
         jwtRefresData.ip = jwtData.ip;
         jwtRefresData.ua = jwtData.ua;
 
@@ -202,25 +203,34 @@ export class AuthController {
             this.getDatabaseDateFormat(this.getIsoDate(jwtRefresData.exp))
         );
 
-        return new Promise(resolve => resolve(responseObject))
+        return new Promise(resolve => resolve(responseObject));
 
     }
     @Post('user/refresh') //http://localhost:3000/auth/user/refresh
     async userTokenRefresh(@Req() req: Request, @Body() data: UserRefreshTokenDto):Promise<LoginInfoDto | ApiResponse> {
+        // console.log('Poceo proces osvezavanja tokena...')
+        // console.log('Podaci primljeni u zahtevu:', data.token);
         const userToken = await this.userService.getUserToken(data.token)
-
+        
         if(!userToken){
+            // console.log('Token nije pronadjen u zahtevu.')
             return new ApiResponse('error', -10002, 'No such refresh token!')
         }
 
         if(userToken.isValid === 0){
+            // console.log('Token vise nije vazeci')
             return new ApiResponse('error', -10003, 'The token is no longer valid!')
         }
 
+        // const sada = new Date();
+        // const datumIstekaString = userToken.expiresAt;
+        // console.log(datumIstekaString)
+        // const datumIsteka = new Date(datumIstekaString.replace(" ", "T")+"Z");
         const sada = new Date();
-        const datumIsteka = new Date(userToken.expiresAt);
+        const datumIsteka = new Date(userToken.expiresAt)
 
         if(datumIsteka.getTime() < sada.getTime()){
+            // console.log('Token je istekao')
             return new ApiResponse('error', -10004, 'The token has expired!!')
         }
 
@@ -229,18 +239,22 @@ export class AuthController {
         try {
             jwtRefreshData = jwt.verify(data.token, jwtSecret);
         } catch (e) {
+            // console.log('Greska pri verifikaciji tokena.',e)
             throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
         }
 
         if (!jwtRefreshData) {
+            // console.log('Greška pri verifikaciji tokena, jwtRefreshData je null!');
             throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
         }
 
         if (jwtRefreshData.ip !== req.ip.toString()) {
+            // console.log('IP adresa ne odgovara!');
             throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
         }
 
         if (jwtRefreshData.ua !== req.headers["user-agent"]) {
+            // console.log('User-agent ne odgovara!');
             throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
         }
 
@@ -254,6 +268,8 @@ export class AuthController {
 
         let token: string =  jwt.sign(jwtData.toPlainObject(), jwtSecret); //GEN !!
 
+        // const newRefreshToken = jwt.sign(jwtRefreshData.toPlainObject(), jwtSecret)
+
         const responseObject = new LoginInfoDto(
             jwtData.id,
             jwtData.identity,
@@ -263,20 +279,38 @@ export class AuthController {
         ) ;
 
         return responseObject;
+
+        // console.log('Osvežen token:', responseObject);
+
+        // await this.userService.updateToken(
+        //     data.token,
+        //     newRefreshToken,
+        //     this.getDatabaseDateFormat(this.getIsoDate(jwtRefreshData.exp))
+        // )
+
+        // console.log('Token uspešno ažuriran u bazi.');
+
+        // return responseObject;
     }
 
     private getDatePlus(numberOfSecounds: number):number{
+        const results = new Date().getTime() / 1000.0  + numberOfSecounds; 
+        
+        // console.log(`Generisano vreme plus ${numberOfSecounds} sekundi:${results}`);
         // trenutni datum, trenutno vreme tog datuma preracunatih u sekunde i dodati broj sekundi
-        return new Date().getTime() / 1000.0  + numberOfSecounds; 
+        return results;
     }
 
     private getIsoDate(timestamp: number):string{
         const date = new Date();
         date.setTime(timestamp * 1000);
-        return date.toISOString();
+        const isoDate = date.toISOString();
+        return isoDate;
     }
 
     private getDatabaseDateFormat(isoFormat: string):string {
-        return isoFormat.substring(0,19).replace('T', ' ');
+        const dbFormat = isoFormat.substring(0,19).replace('T', ' ');
+        // console.log(`Konvertovan ISO format ${isoFormat} u DB format: ${dbFormat}`);
+        return dbFormat;
     }
 }
