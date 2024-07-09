@@ -51,7 +51,7 @@ export class AuthController {
         jwtData.role = "administrator";
         jwtData.id = administrator.administratorId;
         jwtData.identity = administrator.username;
-        jwtData.exp = this.getDatePlus(60 * 20); // 20 min traje token;
+        jwtData.exp = this.getDatePlus(60 * 60 * 24 * 14); // 14 dana traje token;
         jwtData.ip = req.ip.toString();
         jwtData.ua = req.headers["user-agent"];
 
@@ -128,9 +128,7 @@ export class AuthController {
         jwtData.role = jwtRefreshData.role;
         jwtData.id = jwtRefreshData.id;
         jwtData.identity = jwtRefreshData.identity;
-
         jwtData.exp = this.getDatePlus(60 * 10); // 10 min token traje
-
         jwtData.ip = jwtRefreshData.ip;
         jwtData.ua = jwtRefreshData.ua;
 
@@ -174,9 +172,7 @@ export class AuthController {
         jwtData.role = "user";
         jwtData.id = user.userId;
         jwtData.identity = user.email;
-
-        jwtData.exp = this.getDatePlus(60 * 15); // 15 min token traje
-
+        jwtData.exp = this.getDatePlus(60 * 5); // 5 min token traje
         jwtData.ip = req.ip.toString();
         jwtData.ua = req.headers["user-agent"];
 
@@ -252,9 +248,7 @@ export class AuthController {
         jwtData.role = jwtRefreshData.role;
         jwtData.id = jwtRefreshData.id;
         jwtData.identity = jwtRefreshData.identity;
-
-        jwtData.exp = this.getDatePlus(60 * 15); // 15 min token traje
-
+        jwtData.exp = this.getDatePlus(60 * 5); // 5 min token traje
         jwtData.ip = jwtRefreshData.ip;
         jwtData.ua = jwtRefreshData.ua;
 
