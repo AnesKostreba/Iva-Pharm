@@ -121,9 +121,9 @@ export class AuthController {
             throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
         }
 
-        if (jwtRefreshData.ua !== req.headers["user-agent"]) {
-            throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
-        }
+        // if (jwtRefreshData.ua !== req.headers["user-agent"]) {
+        //     throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
+        // }
 
         const jwtData = new JwtDataDto();
         jwtData.role = jwtRefreshData.role;
@@ -253,10 +253,10 @@ export class AuthController {
             throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
         }
 
-        if (jwtRefreshData.ua !== req.headers["user-agent"]) {
-            // console.log('User-agent ne odgovara!');
-            throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
-        }
+        // if (jwtRefreshData.ua !== req.headers["user-agent"]) {
+        //     // console.log('User-agent ne odgovara!');
+        //     throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
+        // }
 
         const jwtData = new JwtDataDto();
         jwtData.role = jwtRefreshData.role;

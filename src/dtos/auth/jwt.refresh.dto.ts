@@ -4,7 +4,7 @@ export class JwtRefreshDataDto{
     identity: string;
     exp: number; // UNIX TIMESTAMP
     ip: string;
-    ua: string // USER AGENT
+    ua: string; // USER AGENT
 
     toPlainObject(){
         return{

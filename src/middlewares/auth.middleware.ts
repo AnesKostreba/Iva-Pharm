@@ -51,9 +51,9 @@ export class AuthMiddleware implements NestMiddleware {
             throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
         }
 
-        if (jwtData.ua !== req.headers["user-agent"]) {
-            throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
-        }
+        // if (jwtData.ua !== req.headers["user-agent"]) {
+        //     throw new HttpException('Bad token found!', HttpStatus.UNAUTHORIZED);
+        // }
 
         if (jwtData.role === "administrator") {
             const administrator = await this.administratorService.getById(jwtData.id);
