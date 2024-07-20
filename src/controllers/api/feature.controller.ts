@@ -58,19 +58,19 @@ import { EditFeatureDto } from "src/dtos/feature/edit.feature.dto";
         getManyBase:{
             decorators:[
                 UseGuards(RoleCheckerGuard),
-                AllowToRoles('administrator', "user")
+                AllowToRoles('administrator', "user",'visitor')
             ]
         },
         getOneBase:{
             decorators:[
                 UseGuards(RoleCheckerGuard),
-                AllowToRoles('administrator', "user")
+                AllowToRoles('administrator', "user",'visitor')
             ]
         },
         updateOneBase:{
             decorators:[
                 UseGuards(RoleCheckerGuard),
-                AllowToRoles('administrator', "user")
+                AllowToRoles('administrator', "user",'visitor')
             ]
         }
     },
@@ -100,7 +100,7 @@ export class FeatureController implements CrudController<Feature> {
 
     @Get('values/:categoryId')
     @UseGuards(RoleCheckerGuard)
-    @AllowToRoles('administrator', 'user')
+    @AllowToRoles('administrator', 'user','visitor')
     async getDistinctValuesByCategoryId(@Param('categoryId') categoryId: number): Promise<DistinctFeatureValuesDto>{
         return await this.service.getDistinctValuesByCategoryId(categoryId);
     }

@@ -59,13 +59,13 @@ import { query } from "express";
         getOneBase:{
             decorators:[
                 UseGuards(RoleCheckerGuard),
-                AllowToRoles('administrator', 'user')
+                AllowToRoles('administrator', 'user', 'visitor')
             ]
         },
         getManyBase:{
             decorators:[
                 UseGuards(RoleCheckerGuard),
-                AllowToRoles('administrator', 'user')
+                AllowToRoles('administrator', 'user', 'visitor')
             ]
         }
     }
@@ -79,7 +79,7 @@ export class ArticleController {
 
     @Get()
     @UseGuards(RoleCheckerGuard)
-    @AllowToRoles('administrator', 'user')
+    @AllowToRoles('administrator', 'user', 'visitor')
     @Override()
     async getMany(@ParsedRequest() req: CrudRequest) {
         return this.service.getMany(req);
@@ -87,7 +87,7 @@ export class ArticleController {
 
     @Get(':id')
     @UseGuards(RoleCheckerGuard)
-    @AllowToRoles('administrator', 'user')
+    @AllowToRoles('administrator', 'user', 'visitor')
     async getOne(@Param('id') id: number): Promise<Article> {
         const article = await this.service.findOne({
             where: { articleId: id, },
@@ -277,14 +277,14 @@ export class ArticleController {
 
     @Post('search')
     @UseGuards(RoleCheckerGuard)
-    @AllowToRoles('administrator', 'user')
+    @AllowToRoles('administrator', 'user', 'visitor')
     async search(@Body() data: ArticleSearchDto, @Query('page')page:number, @Query('limit') limit:number):Promise<{articles: Article[], totalCount: number} | ApiResponse>{
         return await this.service.search(data, page, limit);
     }
 
     @Post('search-by-name')
     @UseGuards(RoleCheckerGuard)
-    @AllowToRoles('administrator', 'user')
+    @AllowToRoles('administrator', 'user', 'visitor')
     async searchArticlesByName(@Body() data: ArticleSearchByName):Promise<Article[] | ApiResponse>{
         return await this.service.searchArticlesByName(data);
     }

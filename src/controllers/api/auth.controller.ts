@@ -52,7 +52,7 @@ export class AuthController {
         jwtData.role = "administrator";
         jwtData.id = administrator.administratorId;
         jwtData.identity = administrator.username;
-        jwtData.exp = this.getDatePlus(60 * 60 * 24 * 14); // 14 dana traje token;
+        jwtData.exp = this.getDatePlus(60 * 5); // 5 min traje token;
         jwtData.ip = req.ip.toString();
         jwtData.ua = req.headers["user-agent"];
 
@@ -62,7 +62,7 @@ export class AuthController {
         jwtRefresData.role = jwtData.role;
         jwtRefresData.id = jwtData.id;
         jwtRefresData.identity = jwtData.identity;
-        jwtRefresData.exp = this.getDatePlus(60 * 60 * 24 * 14);// koliko sekundi od sada...31 dan
+        jwtRefresData.exp = this.getDatePlus(60 * 60 * 24 * 31);// koliko sekundi od sada...31 dan
         jwtRefresData.ip = jwtData.ip;
         jwtRefresData.ua = jwtData.ua;
 

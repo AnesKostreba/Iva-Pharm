@@ -18,7 +18,7 @@ export class Cart {
   @PrimaryGeneratedColumn({ type: "int", name: "cart_id", unsigned: true })
   cartId: number;
 
-  @Column("int", { name: "user_id", unsigned: true})
+  @Column("int", { name: "user_id", unsigned: true })  // Dodano nullable: true i default: NULL
   userId: number;
 
   @Column("timestamp", {

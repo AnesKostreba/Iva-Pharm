@@ -59,20 +59,20 @@ import { CategoryService } from "src/services/category/category.service";
         getManyBase:{
             decorators:[
                 UseGuards(RoleCheckerGuard),
-                AllowToRoles('administrator', "user")
+                AllowToRoles('administrator', "user", "visitor")
             ]
         },
         
         getOneBase:{
             decorators:[
                 UseGuards(RoleCheckerGuard),
-                AllowToRoles('administrator', "user")
+                AllowToRoles('administrator', "user", "visitor")
             ]
         },
         updateOneBase:{
             decorators:[
                 UseGuards(RoleCheckerGuard),
-                AllowToRoles('administrator', "user")
+                AllowToRoles('administrator', "user", "visitor")
             ]
         }
     }
@@ -83,7 +83,7 @@ export class CategoryController {
 
     @Get(':id')
     @UseGuards(RoleCheckerGuard)
-    @AllowToRoles('administrator', 'user')
+    @AllowToRoles('administrator', 'user', "visitor")
     async getOne(@Param('id') id: number): Promise<Category>{
         const category = await this.service.findOne({
             where: { categoryId: id},
@@ -95,7 +95,7 @@ export class CategoryController {
 
     @Get()
     @UseGuards(RoleCheckerGuard)
-    @AllowToRoles('administrator', "user")
+    @AllowToRoles('administrator', "user", "visitor")
     @Override()
     async getMany(@ParsedRequest() req: CrudRequest) {
         return this.service.getMany(req);
