@@ -184,6 +184,7 @@ export class AuthController {
         jwtRefresData.id = jwtData.id;
         jwtRefresData.identity = jwtData.identity;
         jwtRefresData.exp = this.getDatePlus(60 * 60 * 24 * 31);// koliko sekundi od sada...31 dan
+        // jwtRefresData.exp = this.getDatePlus(60 * 8);// koliko sekundi od sada...8 min
         jwtRefresData.ip = jwtData.ip;
         jwtRefresData.ua = jwtData.ua;
 

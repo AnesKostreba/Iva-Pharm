@@ -28,6 +28,8 @@ export class Administrator {
   @Validator.IsNotEmpty()
   @Validator.IsString()
   @Validator.IsHash('sha512')
-  @Validator.Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@!.\?])[a-zA-Z\d@!.\?]{6,}$/)
+  @Validator.Matches(/^(?=.*[a-z])[a-z]{6,}$/)
+
+  // @Validator.Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@!.\?])[a-zA-Z\d@!.\?]{6,}$/)
   passwordHash: string;
 }

@@ -77,14 +77,23 @@ import { AdministratorToken } from './entities/administrator-token.entity';
       AdministratorToken
   ]),
   MailerModule.forRoot({
-    // smtps://username:password@smtp.gmail.com
-    transport: 'smtps://' + MailConfig.username + ':' + 
-                            MailConfig.password + '@' +
-                            MailConfig.hostname,
-    defaults:{
+    transport: {
+      host: MailConfig.hostname,
+      port: 465, 
+      secure: true, 
+      auth: {
+        user: MailConfig.username,
+        pass: MailConfig.password,
+      },
+      tls: {
+        rejectUnauthorized: false, // Omogućava prihvatanje samopotpisanih sertifikata
+      },
+      logger: false,
+      debug: false
+    },
+    defaults: {
       from: MailConfig.senderEmail,
-    }
-
+    },
   }),
 ],
   controllers: [

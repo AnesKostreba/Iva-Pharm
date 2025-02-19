@@ -19,7 +19,7 @@ export class CartService {
     async getLastActiveCartByUserId(userId: number): Promise<Cart | null> {
         const carts = await this.cart.find({ // spisak svih korpi
             where: {
-                userId: userId // koje odgovaraju ovom useru
+                userId: userId // koje odgovaraju useru
             },
             order: {
                 createdAt: "DESC" // sortirati po datumu, najnoviji na vrhu
