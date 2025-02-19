@@ -53,3 +53,7 @@ npm start
   /administrator/login
   username: administrator
   password: administrator
+  
+  # Nedostatci aplikacije na kojima trenutno radim:
+  1. Obrada loše poslatih podataka prilikom registracije i login korisnika.
+  2. Dodavanje proizvoda u korpu kada korisnik nije ulogovan.
