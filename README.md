@@ -1,5 +1,5 @@
 # Web Shop - Backend
-Ovo je web aplikacija gde možete listati, pretraživati, i kupovati proizvode.
+Ovo je web aplikacija gde možete listati, pretraživati i kupovati proizvode.
 
  -Neulogovani korisnici mogu pretraživati i pregledati proizvode.
 
@@ -25,7 +25,7 @@ MySQL
 4. Importujte fajl IvaDatabase.sql u kreiranu bazu.
 
 # Postavljanje storage fajlova
-1. U root folderu projekta nalazi se fajl storage.rar .
+1. U root folderu projekta nalazi se fajl storage.rar koji sadrži slike proizvoda. Najviše slika ima za kategoriju Kozmetika.
 2. Ekstraktujte storage.rar na mestu gde se nalaze IvaPharm i Iva-Frontend.
 3. Struktura foldera treba da izgleda ovako:
    /root_folder
@@ -47,3 +47,9 @@ git clone https://github.com/AnesKostreba/Iva-Front-End.git
 npm install
 6. Pokrenite frontend aplikaciju:
 npm start
+
+# Administrator
+1. Login administrator
+  /administrator/login
+  username: administrator
+  password: administrator
